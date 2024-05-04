@@ -1,0 +1,45 @@
+---
+# tasks file for apache2
+
+
+- name: install apache
+  apt:
+    name=apache2
+    name=libapache2-mod-php
+    update_cache=yes
+    state=latest
+
+- name: enable apache2
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: copy apache config file
+  template:
+    src=templates/apache2.conf
+    dest=/etc/apache2/apache2.conf
+
+- name: copy apache ports.conf file
+  template:
+    src=templates/ports.conf
+    dest=/etc/apache2/ports.conf
+
+- name: copy apache mpm_prefork.conf file
+  template:
+    src=templates/mpm_prefork.conf
+    dest=/etc/apache2/mods-available/mpm_prefork.conf
+
+- name: copy apache www.site.ru.conf  file
+  template:
+    src=templates/www.site.ru.conf
+    dest=/etc/apache2/sites-available/www.site.ru.conf
+
+- name: copy apache dir.conf file
+  template:
+    src=templates/dir.conf
+    dest=/etc/apache2/mods-available/dir.conf
+  notify:
+      - apache restart
+- name: Create rules
+  shell: chmod 750 /etc/apache2

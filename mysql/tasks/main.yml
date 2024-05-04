@@ -1,0 +1,54 @@
+---
+# tasks file for mysql
+
+
+
+- name: Install Mysql Packages
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: [ 'mysql-server', 'python3-pymysql' ]
+  notify:
+    - Start Mysql
+
+
+- name: create root pass
+  shell: sudo touch /root/.my.cnf
+- name: copy .my.cnf
+  template:
+    src=templates/.my.cnf
+    dest=/root/.my.cnf
+- name: rules  
+  shell: sudo chmod 600 /root/.my.cnf
+
+
+
+- name: MySQL | Set MySQL root password
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+      
+- name: Removes all anonymous user accounts
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+
+- name: Removes the MySQL test database
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: copy  my.cnf file
+  template:
+   src=templates/my.cnf
+   dest=/etc/mysql/my.cnf
+  notify:
+     - mysql restart
+- name: Create rules
+  shell: chmod 750 /etc/mysql && chown denis2:mysql /etc/mysql         
+ 

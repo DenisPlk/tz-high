@@ -1,0 +1,5 @@
+---
+# vars file for php
+
+
+php_version: "8.1"  # Define the PHP version variable here
