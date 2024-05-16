@@ -1,0 +1,7 @@
+---
+# vars file for create_doc_root
+#
+http_host: site.ru
+site_user: site.ru
+http_host2: site-2.ru
+site_user2: site-2.ru 

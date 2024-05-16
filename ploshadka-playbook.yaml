@@ -1,0 +1,16 @@
+- hosts: ubuntu_servers
+  become:
+    true
+  become_method:
+    sudo
+  become_user:
+    root
+  remote_user:
+    ansible
+  roles:
+   - create_doc_root
+   - nginx
+   - apache2
+   - php
+   - mysql  
+

@@ -15,3 +15,20 @@
     dest=/etc/nginx/nginx.conf
   notify:
     - nginx restart
+
+
+- name: add virtual site.ru  nginx.conf
+  template:
+    src=templates/www.site.ru.conf
+    dest=/etc/nginx/conf.d/www.site.ru.conf
+  notify:
+    - nginx restart
+
+
+- name: add virtual site-2.ru  nginx.conf
+  template:
+    src=templates/www.site-2.ru.conf
+    dest=/etc/nginx/conf.d/www.site-2.ru.conf
+  notify:
+    - nginx restart
+      

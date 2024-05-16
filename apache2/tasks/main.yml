@@ -3,17 +3,21 @@
 
 
 - name: install apache
-  apt:
-    name=apache2
-    name=libapache2-mod-php
-    update_cache=yes
-    state=latest
-
-- name: enable apache2
-  ansible.builtin.service:
-    name: apache2
-    state: started
-    enabled: yes
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - "apache2"
+    - "libapache2-mod-php"
+    - "libapache2-mpm-itk"
+- name: enmod mpm_itk
+  shell: a2enmod mpm_itk
+      #- name: enable apache2
+      #ansible.builtin.service:
+      # name: apache2
+      # state: started
+      # enabled: yes
 
 - name: copy apache config file
   template:
@@ -43,3 +47,25 @@
       - apache restart
 - name: Create rules
   shell: chmod 750 /etc/apache2
+
+- name: copy apache site.ru virtualhost file
+  template:
+    src=templates/www.site.ru.conf
+    dest=/etc/apache2/sites-available/www.site.ru.conf
+- name: Enable new site
+  shell: /usr/sbin/a2ensite www.site.ru.conf
+
+- name: copy apache site-2.ru virtualhost file
+  template:
+    src=templates/www.site-2.ru.conf
+    dest=/etc/apache2/sites-available/www.site-2.ru.conf
+- name: Enable new site
+  shell: /usr/sbin/a2ensite www.site-2.ru.conf
+
+
+- name: Disable default Apache site
+  shell: /usr/sbin/a2dissite 000-default.conf
+  notify:
+    - Reload Apache
+    - apache restart
+    

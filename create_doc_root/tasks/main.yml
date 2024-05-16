@@ -1,0 +1,152 @@
+---
+# tasks file for create_doc_root
+#
+#
+#
+
+- name: Add the user 
+  ansible.builtin.user:
+    name: "{{ site_user }}"
+    password: '$6$5Z3BA0juReMPpJAH$rUOBU/p8bB8zrRChMhynuvC/Wxf10OGw0Ou6pycP83LG2EGhBrP35rRzSaZF2XBmosh8W.TsXR1.T5VLh82l91' 
+    shell: /bin/bash
+- name: Create var/www/
+  file:
+    path: "/var/www/{{ http_host }}"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+- name: Create log
+  file:
+    path: "/var/www/{{ http_host }}/log"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+- name: Create log/apache2
+  file:
+    path: "/var/www/{{ http_host }}/log/apache2"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+
+- name: Create log/nginx
+  file:
+    path: "/var/www/{{ http_host }}/log/nginx"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+
+- name: Create /tmp
+  file:
+    path: "/var/www/{{ http_host }}/tmp"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+- name: Create /upload
+  file:
+    path: "/var/www/{{ http_host }}/sess"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+- name: Create data
+  file:
+    path: "/var/www/{{ http_host }}/data"
+    state: directory
+    owner: "{{ site_user }}"
+    mode: '0755'
+
+
+
+
+- name: Add the user 
+  ansible.builtin.user:
+    name: "{{ site_user2 }}"
+    password: '$6$/5GeN2.pOkKphGxK$9lIsPuIiTsoaSuiXpbl4igksw5N7RcDHgidQTe7XBxhQaH3L9HXoB6XGnMMd50ujhlrxwa/vFroTNWSxygXhk0' 
+    shell: /bin/bash
+- name: Create var/www/
+  file:
+    path: "/var/www/{{ http_host2 }}"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+- name: Create log
+  file:
+    path: "/var/www/{{ http_host2 }}/log"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+- name: Create log/apache2
+  file:
+    path: "/var/www/{{ http_host2 }}/log/apache2"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+
+- name: Create log/nginx
+  file:
+    path: "/var/www/{{ http_host2 }}/log/nginx"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+
+- name: Create /tmp
+  file:
+    path: "/var/www/{{ http_host2 }}/tmp"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+- name: Create /upload
+  file:
+    path: "/var/www/{{ http_host2 }}/sess"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+- name: Create data
+  file:
+    path: "/var/www/{{ http_host2 }}/data"
+    state: directory
+    owner: "{{ site_user2 }}"
+    mode: '0755'
+
+
+- name: edit /etc/hosts
+  template:
+    src=templates/hosts
+    dest=/etc/hosts
+
+    #- name: Download and unpack software
+    #ansible.builtin.unarchive:
+    #src: "https://www.1c-bitrix.ru/download/standard_encode.tar.gz"
+    #dest: "/var/www/site.ru/data/"
+    #remote_src: true
+    #extra_opts: ['--strip-components=1']
+    #mode: "0755"
+
+- name: install git
+  apt:
+    name: git
+    state: latest
+
+- name: add git global safe.dir
+  shell: git config --system --add safe.directory /var/www/site-2.ru/data 
+      
+- name: Example clone of file maganer
+  ansible.builtin.git:
+      repo: https://github.com/prasathmani/tinyfilemanager.git
+      dest: /var/www/site-2.ru/data/
+      clone: yes
+      single_branch: yes
+      version: master
+- name: change site.ru/data rules after downloading bitrix
+  shell: chown site.ru -R /var/www/site.ru/

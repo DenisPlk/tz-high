@@ -12,12 +12,38 @@
     - "common"
     - "mysql"
     - "mysqli"
-
+    - "curl"
+    - "gd"
+    - "imagick"
+    - "imap"
+    - "intl"
+    - "mbstring" 
 - name: PHP | Ensure PHP-FPM is started and enabled
   ansible.builtin.service:
     name: "php{{ php_version }}-fpm"
     state: started
     enabled: yes
+
+- name: copy php.ini file
+  template:
+   src=templates/php.ini
+   dest=/etc/php/8.1/apache2/php.ini
+
+- name: Create directory
+  ansible.builtin.file:
+    path: "{{ phpmyadmin_httpd_directory }}/phpmyadmin"
+    state: directory
+    owner: "{{ phpmyadmin_httpd_user }}"
+    group: "{{ phpmyadmin_httpd_group }}"
+    mode: "755"
+
+- name: Download and unpack software
+  ansible.builtin.unarchive:
+    src: "{{ phpmyadmin_archive }}"
+    dest: "{{ phpmyadmin_httpd_directory }}/phpmyadmin/"
+    remote_src: true
+    extra_opts: ['--strip-components=1']
+    mode: "0755"
 
 - name: PHP | Ensure nginx is started and enabled
   ansible.builtin.service:

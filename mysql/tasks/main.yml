@@ -43,6 +43,23 @@
     login_user: root
     login_password: "{{ mysql_root_password }}"
 
+
+
+- name: Create a new database with name 'site_db'
+  community.mysql.mysql_db:
+    name: site_db
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create user with password, all database privileges 
+  community.mysql.mysql_user:
+    state: present
+    name: site_usr
+    password: 12345dd
+    priv:
+      'site_db.*': 'ALL'
+
+
 - name: copy  my.cnf file
   template:
    src=templates/my.cnf
@@ -50,5 +67,5 @@
   notify:
      - mysql restart
 - name: Create rules
-  shell: chmod 750 /etc/mysql && chown denis2:mysql /etc/mysql         
+  shell: chmod 750 /etc/mysql && chown denis7:mysql /etc/mysql         
  
