@@ -58,7 +58,7 @@
     path: "/var/www/{{ http_host }}/data"
     state: directory
     owner: "{{ site_user }}"
-    mode: '0755'
+    mode: '0777'
 
 
 
@@ -126,12 +126,12 @@
     dest=/etc/hosts
 
     #- name: Download and unpack software
-    #ansible.builtin.unarchive:
-    #src: "https://www.1c-bitrix.ru/download/standard_encode.tar.gz"
-    #dest: "/var/www/site.ru/data/"
-    #remote_src: true
-    #extra_opts: ['--strip-components=1']
-    #mode: "0755"
+    #  ansible.builtin.unarchive:
+    #   src: "https://www.1c-bitrix.ru/download/standard_encode.tar.gz"
+    #   dest: "/var/www/site.ru/data/"
+    #   remote_src: true
+    #   extra_opts: ['--strip-components=1']
+    #   mode: "0755"
 
 - name: install git
   apt:
@@ -139,7 +139,7 @@
     state: latest
 
 - name: add git global safe.dir
-  shell: git config --system --add safe.directory /var/www/site-2.ru/data 
+  command: git config --system --add safe.directory /var/www/site-2.ru/data 
       
 - name: Example clone of file maganer
   ansible.builtin.git:
@@ -149,4 +149,12 @@
       single_branch: yes
       version: master
 - name: change site.ru/data rules after downloading bitrix
-  shell: chown site.ru -R /var/www/site.ru/
+  ansible.builtin.file:
+    path: /var/www/site.ru/
+    owner: site.ru
+    group: site.ru
+    recurse: yes
+    mode: '0755'
+ 
+ 
+      #  shell: chown site.ru -R /var/www/site.ru/

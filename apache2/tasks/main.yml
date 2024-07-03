@@ -12,7 +12,10 @@
     - "libapache2-mod-php"
     - "libapache2-mpm-itk"
 - name: enmod mpm_itk
-  shell: a2enmod mpm_itk
+  community.general.apache2_module:
+    state: present
+    name: mpm_itk
+  # shell: a2enmod mpm_itk
       #- name: enable apache2
       #ansible.builtin.service:
       # name: apache2
@@ -46,7 +49,10 @@
   notify:
       - apache restart
 - name: Create rules
-  shell: chmod 750 /etc/apache2
+  ansible.builtin.file:
+    path: /etc/apache2
+    mode: '0750'
+  # shell: chmod 750 /etc/apache2
 
 - name: copy apache site.ru virtualhost file
   template:
